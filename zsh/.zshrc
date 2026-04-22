@@ -1,9 +1,9 @@
 
 # Ejecucion 
 
-#screen(){
-#    swww img /home/dav3e/Wallpapers/novitec-maserati-3840x2160-17171.jpg --transition-type center
-#}
+screen(){
+   swww img /home/dav3e/Wallpapers/novitec-maserati-3840x2160-17171.jpg --transition-type center
+}
 
 # 1. Inicio rápido (Powerlevel10k deshabilitado)
 # --- MC20 CUSTOM PROMPT ---
@@ -65,15 +65,17 @@ function reload() {
     echo "\e[32m✔ ¡Sistema recargado con éxito!\e[0m"
 }
 
-# Ocultar todos los widgets del dashboard (los manda a un workspace especial invisible)
-# La terminal se reposiciona centrada debajo del Maserati MC20
 function hide() {
-    for w in calendar audiocircle donut net specs musica nowplaying map; do
+
+    for w in map donut lyrics system_info audio_circle game_life visualizer adn; do
+        echo $w
         hyprctl dispatch movetoworkspacesilent special:hidden,title:$w > /dev/null 2>&1 || true
     done
+    
     # Reposicionar terminal: Centrada y ancha debajo del carro (1920-1200)/2=360
     hyprctl dispatch resizewindowpixel exact 1200 300,title:terminal > /dev/null 2>&1 || true
     hyprctl dispatch movewindowpixel exact 360 720,title:terminal > /dev/null 2>&1 || true
+    
     # Limpiar la terminal del dashboard
     hyprctl dispatch focuswindow title:terminal > /dev/null 2>&1 || true
     sleep 0.1
@@ -121,7 +123,3 @@ export OLLAMA_BASE_URL="http://127.0.0.1:11434"
 export EDITOR=antigravity
 export VISUAL=antigravity
 
-# Claude Code Config
-export ANTHROPIC_API_KEY="your-api-key-here"
-export CLAUDE_CODE_MODEL="claude-3-opus-20240229"
-# End Claude Code Config

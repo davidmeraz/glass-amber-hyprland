@@ -1,0 +1,89 @@
+# -------------------------------
+# Fuente
+# -------------------------------
+# font_family JetBrainsMono NF
+font_size 12
+
+# -------------------------------
+# Fondo y transparencia
+# -------------------------------
+background_opacity 0.10
+background_blur 1
+# active_border_color #00ffff
+
+# Forzar un verde fosforescente en la paleta base (Color 2 y 10)
+# color2  #00ff00
+# color10 #33ff33
+
+# Para que el rojo sea sangre pura
+# color1  #ff0000
+# color9  #ff3333
+
+# Esto hace que el texto en negrita sea más vibrante
+draw_minimal_borders yes
+window_margin_width 2
+
+# -------------------------------
+# Padding interno (margen dentro del terminal)
+
+window_padding_width 15
+
+# -------------------------------
+# Cursor
+# -------------------------------
+# cursor #00ffff
+# cursor_text_color #000000
+cursor_shape beam
+cursor_blink_interval 0
+
+# -------------------------------
+# Scrollback
+# -------------------------------
+scrollback_lines 5000
+
+# -------------------------------
+# Colores estilo Nord
+# -------------------------------
+# background          #2E3440
+# selection_foreground #2E3440
+# selection_background #88C0D0
+# color0  #3B4252
+# color1  #BF616A
+# color2  #A3BE8C
+# color3  #EBCB8B
+# color4  #81A1C1
+# color5  #B48EAD
+# color6  #88C0D0
+# color7  #E5E9F0
+# color8  #4C566A
+# color9  #BF616A
+# color10 #A3BE8C
+# color11 #EBCB8B
+# color12 #81A1C1
+# color13 #B48EAD
+# color14 #8FBCBB
+# color15 #ECEFF4
+
+# -------------------------------
+# Optimización
+# -------------------------------
+repaint_delay 8
+input_delay 2
+sync_to_monitor yes
+confirm_os_window_close 0
+
+
+# BEGIN_KITTY_FONTS
+font_family      family="Fira Code"
+bold_font        auto
+italic_font      auto
+bold_italic_font auto
+# END_KITTY_FONTS
+
+map ctrl+c copy_or_interrupt
+
+
+# BEGIN_KITTY_THEME
+# Alucard
+include current-theme.conf
+# END_KITTY_THEME

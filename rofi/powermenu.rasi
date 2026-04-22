@@ -1,0 +1,113 @@
+/* ═══════════════════════════════════════════════════════════
+ *  POWER MENU — Amber Glass Pill
+ *  Minimal, compact, glass-morphism with golden glow
+ * ═══════════════════════════════════════════════════════════ */
+
+* {
+    bg:             rgba(8, 8, 8, 0.82);
+    bg-entry:       rgba(18, 18, 18, 0.95);
+    border-amber:   rgba(201, 168, 76, 0.55);
+    glow-amber:     rgba(201, 168, 76, 0.25);
+    gold:           #C9A84C;
+    gold-dim:       rgba(201, 168, 76, 0.6);
+    fg:             #EAEAEA;
+    fg-dim:         #777777;
+    transparent:    transparent;
+
+    font: "JetBrains Mono Nerd Font 12";
+    background-color: transparent;
+    text-color: @fg;
+}
+
+window {
+    width: 280px;
+    background-color: @bg;
+    border: 1px solid;
+    border-color: @border-amber;
+    border-radius: 16px;
+    padding: 0;
+    location: center;
+    anchor: center;
+}
+
+mainbox {
+    children: [ inputbar, listview ];
+    background-color: transparent;
+    padding: 12px;
+    spacing: 8px;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+inputbar {
+    children: [ prompt ];
+    background-color: transparent;
+    padding: 0px;
+    spacing: 0px;
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @gold;
+    padding: 6px 0px 2px 4px;
+    font: "JetBrains Mono Nerd Font Bold 11";
+}
+
+entry {
+    enabled: false;
+}
+
+/* ── List ───────────────────────────────────────────────── */
+listview {
+    lines: 5;
+    columns: 1;
+    padding: 0px;
+    spacing: 4px;
+    background-color: transparent;
+    border: 0px;
+    fixed-height: true;
+    scrollbar: false;
+}
+
+/* ── Items ──────────────────────────────────────────────── */
+element {
+    padding: 10px 14px;
+    background-color: transparent;
+    text-color: @fg-dim;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    vertical-align: 0.5;
+    highlight: none;
+}
+
+element-icon {
+    enabled: false;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: @fg;
+}
+
+element selected.normal {
+    background-color: @glow-amber;
+    text-color: @gold;
+    border: 1px solid;
+    border-color: @border-amber;
+}
+
+element alternate.normal {
+    background-color: transparent;
+    text-color: @fg;
+}
+
+element selected.alternate {
+    background-color: @glow-amber;
+    text-color: @gold;
+    border: 1px solid;
+    border-color: @border-amber;
+}

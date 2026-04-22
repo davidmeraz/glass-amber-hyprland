@@ -1,0 +1,50 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrains Mono Nerd Font", "Font Awesome 6 Free";
+    font-size: 14px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+}
+
+/* Estilo premium para cada módulo */
+#workspaces, #cpu, #memory, #clock, #pulseaudio, #network, #tray, #custom-power {
+    background: rgba(5, 5, 5, 0.85);
+    color: #ffffff;
+    padding: 0px 15px;
+    border-radius: 15px;
+    margin: 5px 5px;
+    border: 1px solid rgba(201, 168, 76, 0.2); /* Borde dorado sutil MC20 */
+}
+
+#workspaces button {
+    padding: 0px 5px;
+    color: #555555;
+}
+
+#workspaces button.active {
+    color: #C9A84C; /* Dorado MC20 para workspace activo */
+}
+
+#workspaces button:hover {
+    background: rgba(201, 168, 76, 0.1); /* Hover dorado sutil */
+    border-radius: 10px;
+    color: #C9A84C;
+}
+
+/* Reloj — elemento central protagonista */
+#clock {
+    color: #ffffff;
+    font-weight: bold;
+    border: 1px solid rgba(201, 168, 76, 0.35); /* Borde dorado más visible en el reloj */
+}
+
+/* Indicadores del sistema — jerarquía de grises con toques dorados */
+#cpu { color: #C9A84C; }  /* Dorado — destaca métricas */
+#memory { color: #C9A84C; }
+#pulseaudio { color: #ffffff; }
+#network { color: #dddddd; }
+#custom-power { color: #C9A84C; }
