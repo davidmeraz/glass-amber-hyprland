@@ -1,0 +1,302 @@
+// ============================================================================
+// DYNAMIC ISLAND - PREMIUM AMBER HUD EDITION
+// ============================================================================
+
+// ── Variables (Maserati Dark & Amber Palette) ───────────────────────────────
+$base:          rgba(40, 30, 10, 0.85); // Deep amber-black base
+$surface:       rgba(201, 168, 76, 0.15); // Glowing amber surface
+$surface-hover: rgba(201, 168, 76, 0.35); // Bright amber hover
+$amber:         #C9A84C;
+$amber-light:   #dfc06a;
+$border-dim:    rgba(201, 168, 76, 0.30); // Visible gold borders
+$border:        rgba(201, 168, 76, 0.60); // Strong gold borders
+$text:          #ffffff; // Crisp white
+$subtext:       rgba(244, 240, 230, 0.70); // Brighter subtext
+
+// ── Reset ───────────────────────────────────────────────────────────────────
+* {
+  all: unset;
+  font-family: "JetBrainsMono Nerd Font", "Inter", sans-serif;
+  color: $text;
+}
+
+label {
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+window, eventbox, box {
+  background-color: rgba(0, 0, 0, 0);
+}
+// ── The Bar ─────────────────────────────────────────────────────────────────
+.bar-container {
+  padding: 4px 10px;
+}
+
+.bar-workspaces, .bar-tray {
+  background: $base;
+  border: 1px solid $border-dim;
+  border-radius: 20px;
+}
+
+.bar-workspaces {
+  padding: 4px 10px;
+}
+.bar-tray {
+  padding: 4px 14px;
+}
+
+.ws {
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 14px;
+  color: $subtext;
+  transition: all 250ms ease;
+
+  &:hover {
+    color: $text;
+    background: $surface;
+  }
+}
+
+.ws-active {
+  background: $amber;
+  color: #0a0806;
+
+  &:hover {
+    background: $amber-light;
+    color: #0a0806;
+  }
+}
+
+.tray-item {
+  font-weight: 600;
+  font-size: 13px;
+  padding: 2px 0;
+}
+
+.tray-icon {
+  font-size: 14px;
+  color: $amber;
+}
+
+.tray-val {
+  color: $text;
+}
+
+.tray-clock {
+  margin-left: 6px;
+  padding-left: 10px;
+  border-left: 1px solid $border-dim;
+  font-weight: 700;
+}
+.tray-time {
+  font-size: 14px;
+  color: $text;
+}
+.tray-date {
+  font-size: 11px;
+  color: $subtext;
+}
+
+// ── Dynamic Island ──────────────────────────────────────────────────────────
+.island {
+  transition-property: background, border-color, box-shadow, padding, min-width, min-height;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.island-collapsed {
+  background: rgba(40, 30, 10, 0.25);
+  border: 1px solid $border;
+  border-radius: 24px;
+  padding: 6px 14px;
+  min-height: 32px;
+  min-width: 200px;
+
+  &:hover {
+    background: $base;
+    border-color: $amber-light;
+  }
+}
+
+.island-expanded {
+  background: $base;
+  border: 1px solid $border;
+  border-radius: 24px;
+  padding: 16px 20px;
+  min-width: 440px;
+}
+
+// Glow state when music is playing (collapsed)
+.island-glow {
+  border-color: $amber;
+}
+
+// ── Pill Content (Collapsed) ────────────────────────────────────────────────
+.pill-content {
+  transition: opacity 200ms ease;
+  font-weight: 600;
+}
+.pill-icon {
+  font-size: 16px;
+  color: $amber;
+}
+.pill-icon-music {
+  color: $amber-light;
+}
+.pill-label {
+  font-size: 14px;
+  color: $text;
+}
+.pill-right-icon {
+  font-size: 14px;
+  color: $subtext;
+}
+
+// ── Expanded Content ────────────────────────────────────────────────────────
+.exp-content {
+  transition: opacity 250ms ease-in;
+}
+.exp-header {
+  padding-bottom: 6px;
+  padding-top: 4px;
+}
+.exp-time {
+  font-size: 34px;
+  font-weight: 900;
+  color: $text;
+}
+.exp-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: $amber;
+  margin-top: -4px;
+}
+
+// ── Music Section ───────────────────────────────────────────────────────────
+.exp-music {
+  background: $surface;
+  border: 1px solid $border-dim;
+  border-radius: 12px;
+  padding: 10px;
+}
+.exp-music-icon {
+  font-size: 22px;
+  color: $amber;
+  background: $surface-hover;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid $border-dim;
+}
+.exp-music-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: $text;
+}
+.exp-music-artist {
+  font-size: 12px;
+  font-weight: 500;
+  color: $subtext;
+}
+.exp-music-ctrls {
+  margin-top: 4px;
+}
+.mc-btn {
+  font-size: 16px;
+  color: $subtext;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 16px;
+  &:hover { background: $base; color: $amber; }
+}
+.mc-play {
+  font-size: 18px;
+  color: $text;
+  background: $base;
+  border: 1px solid $border-dim;
+  &:hover { border-color: $amber; color: $amber; }
+}
+
+// ── Sliders ─────────────────────────────────────────────────────────────────
+.exp-sliders {
+  padding: 4px 0;
+}
+.sl-icon {
+  font-size: 18px;
+  color: $amber;
+  min-width: 24px;
+}
+.sl-val {
+  font-size: 12px;
+  font-weight: 600;
+  color: $subtext;
+  min-width: 32px;
+}
+.sl-scale {
+  trough {
+    background: rgba(10, 8, 6, 0.7);
+    border-radius: 8px;
+    min-height: 8px;
+    border: 1px solid $border-dim;
+  }
+  highlight {
+    background: $amber;
+    border-radius: 8px;
+  }
+  slider {
+    background: #ffffff;
+    min-width: 18px;
+    min-height: 18px;
+    border-radius: 50%;
+    border: 2px solid $amber;
+    margin-top: -5px;
+    margin-bottom: -5px;
+  }
+}
+
+// ── Stats ───────────────────────────────────────────────────────────────────
+.exp-stats {
+  margin-top: 4px;
+}
+.stat {
+  background: $surface;
+  border: 1px solid $border-dim;
+  border-radius: 10px;
+  padding: 6px 12px;
+  &:hover {
+    border-color: $amber;
+    background: $base;
+  }
+}
+.stat-icon {
+  font-size: 16px;
+  color: $amber;
+}
+.stat-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: $text;
+}
+
+// ── Actions ─────────────────────────────────────────────────────────────────
+.exp-actions {
+  margin-top: 4px;
+}
+.act-btn {
+  font-size: 16px;
+  color: $text;
+  background: $surface;
+  border: 1px solid $border-dim;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 10px;
+  transition: all 200ms ease;
+  &:hover {
+    background: $amber;
+    border-color: $amber-light;
+    color: #0a0806;
+  }
+}

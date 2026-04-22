@@ -1,0 +1,174 @@
+;; ============================================================================
+;; Dynamic Island for Hyprland
+;; Two separate windows: stable bar + independent morphing island.
+;; The bar NEVER changes. The island morphs freely in its own window.
+;; ============================================================================
+
+;; ── Variables ───────────────────────────────────────────────────────────────
+(defpoll clock_time :interval "1s" `date '+%H:%M'`)
+(defpoll clock_sec  :interval "1s" `date '+%S'`)
+(defpoll clock_date :interval "60s" `date '+%a, %b %d'`)
+(defpoll volume     :interval "0.5s" `wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{printf "%.0f", $2*100}' || echo 50`)
+(defpoll wifi_name  :interval "5s" `nmcli -t -f active,ssid dev wifi 2>/dev/null | grep '^yes' | cut -d: -f2 || echo 'Off'`)
+(defpoll battery_pct    :interval "15s" `cat /sys/class/power_supply/BAT*/capacity 2>/dev/null || echo 100`)
+(defpoll battery_status :interval "15s" `cat /sys/class/power_supply/BAT*/status 2>/dev/null || echo 'Full'`)
+(deflisten player_title  :initial "" `playerctl --follow metadata title 2>/dev/null`)
+(deflisten player_artist :initial "" `playerctl --follow metadata artist 2>/dev/null`)
+(deflisten player_status :initial "Stopped" `playerctl --follow status 2>/dev/null`)
+(defpoll cpu_usage :interval "3s" `LANG=C top -bn1 | grep 'Cpu(s)' | awk '{printf "%.0f", $2}'`)
+(defpoll ram_usage :interval "3s" `free | awk '/Mem:/{printf "%.0f", $3/$2*100}'`)
+(defpoll active_workspace :interval "0.3s" `hyprctl activeworkspace -j 2>/dev/null | jq '.id' 2>/dev/null || echo 1`)
+
+;; State
+(defvar island_expanded false)
+
+;; ═══════════════════════════════════════════════════════════════════════════
+;; WINDOW 1: THE BAR (stable, never moves, never distorts)
+;; ═══════════════════════════════════════════════════════════════════════════
+
+;; ── Workspaces Pill ─────────────────────────────────────────────────────────
+(defwidget bar_workspaces []
+  (box :class "bar-workspaces" :space-evenly false :spacing 4
+    (button :class "ws ${active_workspace == 1 ? 'ws-active' : ''}" :onclick "hyprctl dispatch workspace 1" "1")
+    (button :class "ws ${active_workspace == 2 ? 'ws-active' : ''}" :onclick "hyprctl dispatch workspace 2" "2")
+    (button :class "ws ${active_workspace == 3 ? 'ws-active' : ''}" :onclick "hyprctl dispatch workspace 3" "3")
+    (button :class "ws ${active_workspace == 4 ? 'ws-active' : ''}" :onclick "hyprctl dispatch workspace 4" "4")
+    (button :class "ws ${active_workspace == 5 ? 'ws-active' : ''}" :onclick "hyprctl dispatch workspace 5" "5")
+    (button :class "ws ${active_workspace == 6 ? 'ws-active' : ''}" :onclick "hyprctl dispatch workspace 6" "6")))
+
+;; ── System Tray Pill ────────────────────────────────────────────────────────
+(defwidget bar_tray []
+  (box :class "bar-tray" :space-evenly false :spacing 14
+    (eventbox :onclick "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+      (box :class "tray-item" :space-evenly false :spacing 4
+        (label :class "tray-icon" :text "󰕾")
+        (label :class "tray-val" :text "${volume}%")))
+    (box :class "tray-item" :space-evenly false :spacing 4
+      (label :class "tray-icon tray-wifi" :text {wifi_name != "Off" ? "󰤨" : "󰤭"})
+      (label :class "tray-val" :text wifi_name :limit-width 8))
+    (box :class "tray-item" :space-evenly false :spacing 4
+      (label :class "tray-icon tray-bat" :text {battery_status == "Charging" ? "󰂄" : "󰁹"})
+      (label :class "tray-val" :text "${battery_pct}%"))
+    (box :class "tray-clock" :space-evenly false :spacing 6
+      (label :class "tray-time" :text clock_time)
+      (label :class "tray-date" :text clock_date))))
+
+;; ── Bar Layout ──────────────────────────────────────────────────────────────
+(defwidget bar_layout []
+  (centerbox :class "bar-container"
+    (box :halign "start" :valign "center" (bar_workspaces))
+    (box)  ;; empty center — island is in its own window
+    (box :halign "end" :valign "center" (bar_tray))))
+
+;; ═══════════════════════════════════════════════════════════════════════════
+;; WINDOW 2: THE DYNAMIC ISLAND (independent, morphs freely)
+;; ═══════════════════════════════════════════════════════════════════════════
+
+;; ── Expanded Content ────────────────────────────────────────────────────────
+(defwidget music_section []
+  (box :class "exp-music" :space-evenly false :spacing 12
+    (label :class "exp-music-icon" :text "󰎆")
+    (box :orientation "v" :space-evenly false :spacing 2 :hexpand true
+      (label :class "exp-music-title"
+             :text {player_title != "" ? player_title : "No media"}
+             :limit-width 28 :halign "start")
+      (label :class "exp-music-artist" :text player_artist
+             :limit-width 24 :halign "start"))
+    (box :class "exp-music-ctrls" :space-evenly true :spacing 6
+      (button :class "mc-btn" :onclick "playerctl previous" "󰒮")
+      (button :class "mc-btn mc-play" :onclick "playerctl play-pause"
+              {player_status == "Playing" ? "󰏤" : "󰐊"})
+      (button :class "mc-btn" :onclick "playerctl next" "󰒭"))))
+
+(defwidget exp_slider []
+  (box :class "exp-sliders" :orientation "v" :space-evenly false :spacing 8
+    (box :class "slider-row" :space-evenly false :spacing 12
+      (label :class "sl-icon" :text "󰕾")
+      (scale :class "sl-scale" :hexpand true :active true
+             :min 0 :max 101 :value {volume ?: 50}
+             :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%")
+      (label :class "sl-val" :text "${volume}%"))))
+
+(defwidget exp_stats []
+  (box :class "exp-stats" :space-evenly true :spacing 8
+    (box :class "stat" :space-evenly false :spacing 5
+      (label :class "stat-icon stat-cpu" :text "󰻠")
+      (label :class "stat-val" :text "${cpu_usage}%"))
+    (box :class "stat" :space-evenly false :spacing 5
+      (label :class "stat-icon stat-ram" :text "󰍛")
+      (label :class "stat-val" :text "${ram_usage}%"))
+    (box :class "stat" :space-evenly false :spacing 5
+      (label :class "stat-icon stat-wifi" :text "󰤨")
+      (label :class "stat-val" :text wifi_name :limit-width 8))
+    (box :class "stat" :space-evenly false :spacing 5
+      (label :class "stat-icon stat-bat" :text "󰁹")
+      (label :class "stat-val" :text "${battery_pct}%"))))
+
+(defwidget exp_actions []
+  (box :class "exp-actions" :space-evenly true :spacing 10 :halign "center"
+    (button :class "act-btn" :onclick "hyprctl dispatch exec '[float;size 800 600] kitty'" "󰆍")
+    (button :class "act-btn" :onclick "hyprctl dispatch exec 'thunar'" "󰉋")
+    (button :class "act-btn" :onclick "hyprctl dispatch exec 'google-chrome'" "󰈹")
+    (button :class "act-btn" :onclick "hyprctl dispatch exec 'rofi -show drun'" "󰍉")
+    (button :class "act-btn" :onclick "loginctl lock-session" "󰌾")))
+
+;; ── The Morphing Island — one box that grows/shrinks ────────────────────────
+(defwidget island_morph []
+  (eventbox
+    :onhover "${EWW_CMD} update island_expanded=true"
+    :onhoverlost "${EWW_CMD} update island_expanded=false"
+    (box :class "island ${island_expanded ? 'island-expanded' : 'island-collapsed'} ${player_status == 'Playing' && !island_expanded ? 'island-glow' : ''}"
+         :orientation "v" :space-evenly false :spacing 0 :halign "center"
+      ;; Collapsed: pill content
+      (box :class "pill-content" :visible {!island_expanded}
+           :space-evenly false :spacing 10 :halign "center"
+        (label :class "pill-icon ${player_status == 'Playing' ? 'pill-icon-music' : ''}"
+               :text {player_status == "Playing" ? "󰎆" : ""})
+        (label :class "pill-label"
+               :text {player_status == "Playing" ? player_title : clock_time}
+               :limit-width 22)
+        (label :class "pill-right-icon"
+               :text {player_status == "Playing" ? "󰏤" : ""}))
+      ;; Expanded: content slides down
+      (revealer :transition "slidedown" :reveal {island_expanded} :duration "300ms"
+        (box :class "exp-content" :orientation "v" :space-evenly false :spacing 10
+          ;; Header
+          (box :class "exp-header" :orientation "v" :space-evenly false :spacing 2 :halign "center"
+            (label :class "exp-time" :text clock_time)
+            (label :class "exp-date" :text clock_date))
+          (music_section)
+          (exp_slider)
+          (exp_stats)
+          (exp_actions))))))
+
+;; ═══════════════════════════════════════════════════════════════════════════
+;; WINDOW DEFINITIONS
+;; ═══════════════════════════════════════════════════════════════════════════
+
+;; Bar: overlay, no exclusive — gaps_out handles tiled window spacing
+(defwindow island-bar
+  :monitor 0
+  :geometry (geometry
+    :x "0%"
+    :y "5px"
+    :width "100%"
+    :anchor "top center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :namespace "island-bar"
+  (bar_layout))
+
+;; Island: overlay, same level as bar but rendered on top (created after bar)
+(defwindow dynamic-island
+  :monitor 0
+  :geometry (geometry
+    :x "0%"
+    :y "9px"
+    :width "500px"
+    :anchor "top center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :namespace "dynamic-island"
+  (island_morph))
